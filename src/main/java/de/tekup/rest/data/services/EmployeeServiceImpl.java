@@ -23,4 +23,8 @@ public class EmployeeServiceImpl {
 		return reposEmployee.findAll();
 	}
 	
+	public EmployeeEntity createEmployeeEntity(EmployeeEntity employee) {
+		return reposEmployee.save(employee);
+	}
+	
 }
