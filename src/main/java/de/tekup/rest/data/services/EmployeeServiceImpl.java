@@ -42,7 +42,12 @@ public class EmployeeServiceImpl {
 	
 	//update 
 	public EmployeeEntity modifyEmployeeEntity(int id, EmployeeEntity newEmployee) {
-		return null;
+		EmployeeEntity employee = getEmployeeEntityById(id);
+		if(newEmployee.getName() != null)
+			employee.setName(newEmployee.getName());
+		if(newEmployee.getDateOfBirth() != null)
+			employee.setDateOfBirth(newEmployee.getDateOfBirth());
+		return reposEmployee.save(employee);
 	}
 	
 	

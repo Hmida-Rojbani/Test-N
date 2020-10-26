@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +42,11 @@ public class EmployeeRest {
 	@PostMapping(path = "/api/employees")
 	public EmployeeEntity createEmloyee(@RequestBody EmployeeEntity employee) {
 		return service.createEmployeeEntity(employee);
+	}
+	
+	@PutMapping(path = "/api/employees/{id}")
+	public EmployeeEntity modifyEmloyee(@PathVariable("id") int code,@RequestBody EmployeeEntity newEmployee) {
+		return service.modifyEmployeeEntity(code, newEmployee);
 	}
 	
 	@ExceptionHandler(NoSuchElementException.class)
