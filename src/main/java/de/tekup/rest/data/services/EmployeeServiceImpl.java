@@ -40,4 +40,15 @@ public class EmployeeServiceImpl {
 		return employee;	
 	}
 	
+	//update 
+	public EmployeeEntity modifyEmployeeEntity(int id, EmployeeEntity newEmployee) {
+		return null;
+	}
+	
+	
+	// delete by Id
+	public EmployeeEntity deleteEmployeeEntity(int id) {
+		return null;
+	}
+	
 }
