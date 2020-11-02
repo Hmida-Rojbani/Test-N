@@ -36,10 +36,23 @@ public class EmployeeServiceImpl {
 	
 	// update that consider phones
 	public EmployeeEntity createEmployeeEntity(EmployeeEntity employee) {
+		// save Address
 		AddressEntity address = employee.getAddress();
 		AddressEntity addressInBase = reposAddress.save(address);
 		 System.err.println(addressInBase);
-		return reposEmployee.save(employee);
+		 // save Employee
+		EmployeeEntity employeeInBase = reposEmployee.save(employee);
+		// save phones
+		List<PhoneNumberEntity> phones = employee.getPhones();
+		/*for (PhoneNumberEntity phone : phones) {
+			phone.setEmployee(employeeInBase);
+			reposPhone.save(phone);
+		}*/
+		
+		phones.forEach(phone -> phone.setEmployee(employeeInBase));
+		reposPhone.saveAll(phones);
+		
+		return employeeInBase;
 	}
 	
 	public EmployeeEntity getEmployeeEntityById(int id) {

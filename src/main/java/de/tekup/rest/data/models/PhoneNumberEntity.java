@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -21,6 +23,7 @@ public class PhoneNumberEntity {
 	private String operator;
 	
 	@ManyToOne
+	@JsonIgnore
 	private EmployeeEntity employee;
 
 }
