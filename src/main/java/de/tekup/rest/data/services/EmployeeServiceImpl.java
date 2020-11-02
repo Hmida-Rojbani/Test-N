@@ -53,7 +53,9 @@ public class EmployeeServiceImpl {
 	
 	// delete by Id
 	public EmployeeEntity deleteEmployeeEntity(int id) {
-		return null;
+		EmployeeEntity employee = getEmployeeEntityById(id);
+		reposEmployee.deleteById(id);
+		return employee;
 	}
 	
 }
