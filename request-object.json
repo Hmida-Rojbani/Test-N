@@ -15,5 +15,15 @@
     		"number": "22222222",
     		"operator": "Oredoo"
     	}
+    	],
+    "departs": [
+    	{
+    		"name": "RAD",
+    		"codeDepart": "depart1"
+    	},
+    	{
+    		"number": "Financial",
+    		"operator": "finac1"
+    	}
     	]
 }
