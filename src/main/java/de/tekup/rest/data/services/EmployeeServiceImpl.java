@@ -31,6 +31,9 @@ public class EmployeeServiceImpl {
 	
 	// update that consider Address
 	public EmployeeEntity createEmployeeEntity(EmployeeEntity employee) {
+		AddressEntity address = employee.getAddress();
+		AddressEntity addressInBase = reposAddress.save(address);
+		 System.err.println(addressInBase);
 		return reposEmployee.save(employee);
 	}
 	
@@ -42,6 +45,7 @@ public class EmployeeServiceImpl {
 		}else {
 			throw new NoSuchElementException("Employee with this id is not found");
 		}
+		System.err.println(employee.getAddress());
 		return employee;	
 	}
 	

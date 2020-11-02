@@ -6,11 +6,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter@Setter
+@ToString
 public class AddressEntity {
 
 	@Id
@@ -22,5 +26,6 @@ public class AddressEntity {
 	private String city;
 	
 	@OneToOne(mappedBy = "address")
+	@JsonIgnore
 	private EmployeeEntity employee;
 }

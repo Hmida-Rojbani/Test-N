@@ -12,10 +12,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Employee")
 @Data
+@ToString(exclude = "address")
 public class EmployeeEntity {
 	
 	@Id
