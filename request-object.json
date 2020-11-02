@@ -1,4 +1,9 @@
 {
-	"name":"pers3",
-	"dateOfBirth": "1999-08-23"
+	"name": "pers3",
+	"dateOfBirth": "1999-08-23",
+	"address": {
+		"number": 22,
+		"street": "str Liberty",
+		"city": "Ariana"
+	}
 }
