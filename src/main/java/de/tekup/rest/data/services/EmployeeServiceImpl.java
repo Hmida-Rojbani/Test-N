@@ -9,27 +9,32 @@ import org.springframework.stereotype.Service;
 
 import de.tekup.rest.data.models.AddressEntity;
 import de.tekup.rest.data.models.EmployeeEntity;
+import de.tekup.rest.data.models.PhoneNumberEntity;
 import de.tekup.rest.data.repositories.AddressRepository;
 import de.tekup.rest.data.repositories.EmployeeRepository;
+import de.tekup.rest.data.repositories.PhoneNumberRepository;
 
 @Service
 public class EmployeeServiceImpl {
 
 	private EmployeeRepository reposEmployee;
 	private AddressRepository reposAddress;
+	private PhoneNumberRepository reposPhone;
 
-	@Autowired	
-	public EmployeeServiceImpl(EmployeeRepository reposEmployee, AddressRepository reposAddress) {
+	@Autowired
+	public EmployeeServiceImpl(EmployeeRepository reposEmployee, AddressRepository reposAddress,
+			PhoneNumberRepository reposPhone) {
 		super();
 		this.reposEmployee = reposEmployee;
 		this.reposAddress = reposAddress;
+		this.reposPhone = reposPhone;
 	}
 
 	public List<EmployeeEntity> getAllEmployeeEntities(){
 		return reposEmployee.findAll();
 	}
 	
-	// update that consider Address
+	// update that consider phones
 	public EmployeeEntity createEmployeeEntity(EmployeeEntity employee) {
 		AddressEntity address = employee.getAddress();
 		AddressEntity addressInBase = reposAddress.save(address);
