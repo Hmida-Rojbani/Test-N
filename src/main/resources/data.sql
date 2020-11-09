@@ -1,0 +1,24 @@
+insert into address_entity (id, city, number, street) values (1, 'st. 1', 22, 'Ariana');
+insert into employee (code, address_id, date_of_birth, employeename) values (1, 1, '1994-05-04', 'pers1');
+insert into phone_number_entity (id, employee_code, number, operator) values (1, 1,'99999999', 'TunisieTelecom');
+insert into phone_number_entity (id, employee_code, number, operator) values (2, 1,'55555555', 'Ooreddo');
+insert into departement_entity (id, code_depart, name) values (1, 'R&D', 'dep1');
+insert into worked_in (departs_id, employees_code) values (1, 1);
+insert into departement_entity (id, code_depart, name) values (2, 'Finance', 'finance');
+insert into worked_in (departs_id, employees_code) values (2, 1);
+insert into address_entity (id, city, number, street) values (2, 'st. 2', 44, 'Tunis');
+insert into employee (code, address_id, date_of_birth, employeename) values (2, 2, '1998-10-08', 'pers2');
+insert into phone_number_entity (id, employee_code, number, operator) values (3,2,'54444444', 'Orange');
+insert into phone_number_entity (id, employee_code, number, operator) values (4,2,'22222222', 'Ooreddo');
+insert into departement_entity (id, code_depart, name) values (3, 'Insurance', 'ins01');
+insert into worked_in (departs_id, employees_code) values (2, 2);
+insert into worked_in (departs_id, employees_code) values (3, 2);
+insert into address_entity (id, city, number, street) values (3, 'st. 3', 66, 'Manouba');
+insert into employee (code, address_id, date_of_birth, employeename) values (3, 3, '1999-11-28', 'pers3');
+insert into phone_number_entity (id, employee_code, number, operator) values (5, 3, '53333333', 'Orange');
+insert into phone_number_entity (id, employee_code, number, operator) values (6, 3, '55333333', 'Orange');
+insert into departement_entity (id, code_depart, name) values (4, 'HR', 'dep0');
+insert into worked_in (departs_id, employees_code)  values (1, 3);
+insert into worked_in (departs_id, employees_code)  values (4, 3);
+insert into worked_in (departs_id, employees_code)  values (2, 3);
+

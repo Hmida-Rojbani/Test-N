@@ -34,7 +34,7 @@ public class EmployeeEntity {
 	private LocalDate dateOfBirth;
 	
 	@OneToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "address")
+	@JoinColumn(name = "addressId")
 	private AddressEntity address;
 	
 	@OneToMany(mappedBy = "employee",cascade = CascadeType.REMOVE)
