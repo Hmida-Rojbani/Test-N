@@ -64,10 +64,10 @@ public class EmployeeServiceImpl {
 		for (DepartementEntity reqDepartement : requestDepartement) {
 			if(inBaseDepartment.contains(reqDepartement)) {
 				DepartementEntity inBaseDept = inBaseDepartment
-				.get(inBaseDepartment.indexOf(reqDepartement));
+				.get(inBaseDepartment.indexOf(reqDepartement));	
 				
 				inBaseDept.getEmployees().add(employeeInBase);
-				
+	
 				reposDepart.save(inBaseDept);
 			}else {
 				//List<EmployeeEntity> listEmp = new ArrayList<>();
@@ -95,12 +95,27 @@ public class EmployeeServiceImpl {
 	
 	//update 
 	public EmployeeEntity modifyEmployeeEntity(int id, EmployeeEntity newEmployee) {
-		EmployeeEntity employee = getEmployeeEntityById(id);
+		EmployeeEntity oldEmployee = getEmployeeEntityById(id);
 		if(newEmployee.getName() != null)
-			employee.setName(newEmployee.getName());
+			oldEmployee.setName(newEmployee.getName());
 		if(newEmployee.getDateOfBirth() != null)
-			employee.setDateOfBirth(newEmployee.getDateOfBirth());
-		return reposEmployee.save(employee);
+			oldEmployee.setDateOfBirth(newEmployee.getDateOfBirth());
+		// update address
+		AddressEntity newAddress = newEmployee.getAddress();
+		AddressEntity oldAddress = oldEmployee.getAddress();
+		if(newAddress != null) {
+			if(newAddress.getNumber() != 0)
+				oldAddress.setNumber(newAddress.getNumber());
+			if(newAddress.getStreet() != null)
+				oldAddress.setStreet(newAddress.getStreet());
+			if(newAddress.getCity() != null)
+				oldAddress.setCity(newAddress.getCity());
+		}
+		// update phones
+		
+		// update departement
+		
+		return reposEmployee.save(oldEmployee);
 	}
 	
 	
