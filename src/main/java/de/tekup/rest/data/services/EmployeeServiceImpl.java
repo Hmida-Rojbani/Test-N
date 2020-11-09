@@ -2,9 +2,12 @@ package de.tekup.rest.data.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -158,8 +161,40 @@ public class EmployeeServiceImpl {
 	
 	// All Employees with a given operator
 	public List<EmployeeEntity> getAllByOperator(String operator){
-		// TODO 
-		return null;
+		// version 1
+		/*List<EmployeeEntity> employees = reposEmployee.findAll();
+		List<EmployeeEntity> results = new ArrayList<>();
+		for (EmployeeEntity employee : employees) {
+			List<PhoneNumberEntity> phones = employee.getPhones();
+			for (PhoneNumberEntity phone : phones) {
+				if(phone.getOperator().equalsIgnoreCase(operator)) {
+					results.add(employee);
+					break;
+				}
+					
+			}
+		}*/
+		
+		// version 2
+		/*Set<EmployeeEntity> results = new HashSet<>();
+		List<PhoneNumberEntity> phones = reposPhone.findAll();
+		for (PhoneNumberEntity phone : phones) {
+			if(phone.getOperator().equalsIgnoreCase(operator)) {
+				results.add(phone.getEmployee());
+			}
+		}
+		return new ArrayList<>(results);
+		*/
+		
+		// version 3 in Java 8
+		List<EmployeeEntity> results = reposPhone.findAll()
+												.stream()
+												.filter(phone -> phone.getOperator().equalsIgnoreCase(operator))
+												.map(phone -> phone.getEmployee())
+												.distinct()
+												.collect(Collectors.toList());
+		
+		return results;
 	}
 	
 
