@@ -63,7 +63,12 @@ public class EmployeeServiceImpl {
 		
 		for (DepartementEntity reqDepartement : requestDepartement) {
 			if(inBaseDepartment.contains(reqDepartement)) {
+				DepartementEntity inBaseDept = inBaseDepartment
+				.get(inBaseDepartment.indexOf(reqDepartement));
 				
+				inBaseDept.getEmployees().add(employeeInBase);
+				
+				reposDepart.save(inBaseDept);
 			}else {
 				//List<EmployeeEntity> listEmp = new ArrayList<>();
 				//listEmp.add(employeeInBase);
