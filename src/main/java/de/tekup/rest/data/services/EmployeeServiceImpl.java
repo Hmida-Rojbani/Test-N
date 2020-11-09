@@ -155,5 +155,12 @@ public class EmployeeServiceImpl {
 		reposEmployee.deleteById(id);
 		return employee;
 	}
+	
+	// All Employees with a given operator
+	public List<EmployeeEntity> getAllByOperator(String operator){
+		// TODO 
+		return null;
+	}
+	
 
 }

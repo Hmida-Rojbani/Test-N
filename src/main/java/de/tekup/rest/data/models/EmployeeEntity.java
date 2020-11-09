@@ -3,6 +3,7 @@ package de.tekup.rest.data.models;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,14 +33,14 @@ public class EmployeeEntity {
 	
 	private LocalDate dateOfBirth;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "address")
 	private AddressEntity address;
 	
-	@OneToMany(mappedBy = "employee")
+	@OneToMany(mappedBy = "employee",cascade = CascadeType.REMOVE)
 	List<PhoneNumberEntity> phones;
 	
-	@ManyToMany(mappedBy = "employees")
+	@ManyToMany(mappedBy = "employees", cascade = CascadeType.REMOVE)
 	List<DepartementEntity> departs;
 
 }

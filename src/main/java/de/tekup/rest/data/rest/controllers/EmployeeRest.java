@@ -55,6 +55,11 @@ public class EmployeeRest {
 		return service.deleteEmployeeEntity(code);
 	}
 	
+	@GetMapping(path="/api/employees/operator/{operator}")
+	public List<EmployeeEntity> getAllByOperator(@PathVariable("operator") String operator){
+		return service.getAllByOperator(operator);
+	}
+	
 	@ExceptionHandler(NoSuchElementException.class)
 	public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
 		return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
