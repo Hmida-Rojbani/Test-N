@@ -1,5 +1,7 @@
 package de.tekup.rest.data.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -8,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.tekup.rest.data.models.AddressEntity;
+import de.tekup.rest.data.models.DepartementEntity;
 import de.tekup.rest.data.models.EmployeeEntity;
 import de.tekup.rest.data.models.PhoneNumberEntity;
 import de.tekup.rest.data.repositories.AddressRepository;
+import de.tekup.rest.data.repositories.DepartementRepository;
 import de.tekup.rest.data.repositories.EmployeeRepository;
 import de.tekup.rest.data.repositories.PhoneNumberRepository;
 
@@ -20,14 +24,16 @@ public class EmployeeServiceImpl {
 	private EmployeeRepository reposEmployee;
 	private AddressRepository reposAddress;
 	private PhoneNumberRepository reposPhone;
+	private DepartementRepository reposDepart;
 
 	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository reposEmployee, AddressRepository reposAddress,
-			PhoneNumberRepository reposPhone) {
+			PhoneNumberRepository reposPhone, DepartementRepository reposDepart) {
 		super();
 		this.reposEmployee = reposEmployee;
 		this.reposAddress = reposAddress;
 		this.reposPhone = reposPhone;
+		this.reposDepart = reposDepart;
 	}
 
 	public List<EmployeeEntity> getAllEmployeeEntities(){
@@ -51,6 +57,21 @@ public class EmployeeServiceImpl {
 		
 		phones.forEach(phone -> phone.setEmployee(employeeInBase));
 		reposPhone.saveAll(phones);
+		// save Departement
+		List<DepartementEntity> requestDepartement = employee.getDeparts();
+		List<DepartementEntity> inBaseDepartment = reposDepart.findAll();
+		
+		for (DepartementEntity reqDepartement : requestDepartement) {
+			if(inBaseDepartment.contains(reqDepartement)) {
+				
+			}else {
+				//List<EmployeeEntity> listEmp = new ArrayList<>();
+				//listEmp.add(employeeInBase);
+				reqDepartement.setEmployees(Arrays.asList(employeeInBase));
+				reposDepart.save(reqDepartement);
+			}
+				
+		}
 		
 		return employeeInBase;
 	}

@@ -22,8 +22,8 @@
     		"codeDepart": "depart1"
     	},
     	{
-    		"number": "Financial",
-    		"operator": "finac1"
+    		"name": "Financial",
+    		"codeDepart": "finac1"
     	}
     	]
 }
