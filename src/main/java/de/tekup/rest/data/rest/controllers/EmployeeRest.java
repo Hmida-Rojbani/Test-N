@@ -70,6 +70,10 @@ public class EmployeeRest {
 	public Map<String, Long> getPhoneOperatorAndCount(){
 		 return service.getOperatorsAndCount();
 	}
+	@GetMapping(path="/api/employees/name/{name}")
+	public EmployeeEntity getEmployeeByName(@PathVariable("name") String name){
+		 return service.getByName(name);
+	}
 	
 	@ExceptionHandler(NoSuchElementException.class)
 	public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {

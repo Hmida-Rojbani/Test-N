@@ -238,5 +238,21 @@ public class EmployeeServiceImpl {
 	}
 
 	// return an employee by name
+	public EmployeeEntity getByName(String name) {
+		List<EmployeeEntity> employees = reposEmployee.findAll();
+		// version 1
+		/*for (EmployeeEntity employee : employees) {
+			if(employee.getName().equalsIgnoreCase(name))
+				return employee;
+		}
+		
+		throw new NoSuchElementException("Employee with this name is not found");
+		*/
+		// version 2
+		return employees.stream()
+				 .filter(employee -> employee.getName().equalsIgnoreCase(name))
+				 .findFirst()
+				 .orElseThrow(()->new NoSuchElementException("Employee with this name is not found"));
+	}
 
 }
