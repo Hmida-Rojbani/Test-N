@@ -1,6 +1,7 @@
 package de.tekup.rest.data.rest.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,16 @@ public class EmployeeRest {
 	@GetMapping(path="/api/employees/operator/{operator}")
 	public List<EmployeeEntity> getAllByOperator(@PathVariable("operator") String operator){
 		return service.getAllByOperator(operator);
+	}
+	
+	@GetMapping(path="/api/employees/average/age")
+	public double getEmployeeAverageAge(){
+		return service.getAverageAges();
+	}
+	
+	@GetMapping(path="/api/employees/count/operator")
+	public Map<String, Long> getPhoneOperatorAndCount(){
+		 return service.getOperatorsAndCount();
 	}
 	
 	@ExceptionHandler(NoSuchElementException.class)

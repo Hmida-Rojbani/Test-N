@@ -1,6 +1,7 @@
 package de.tekup.rest.data.models;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -42,5 +43,12 @@ public class EmployeeEntity {
 	
 	@ManyToMany(mappedBy = "employees", cascade = CascadeType.REMOVE)
 	List<DepartementEntity> departs;
+	
+	public int getAge() {
+		LocalDate now = LocalDate.now();
+		//int age = now.getYear()-dateOfBirth.getYear();
+		int age = (int) ChronoUnit.YEARS.between(dateOfBirth, now);
+		return age;
+	}
 
 }

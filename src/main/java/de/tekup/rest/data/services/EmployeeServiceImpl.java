@@ -1,13 +1,15 @@
 package de.tekup.rest.data.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
+
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +99,7 @@ public class EmployeeServiceImpl {
 
 	// update
 	public EmployeeEntity modifyEmployeeEntity(int id, EmployeeEntity newEmployee) {
-		// there is a better way ? (3 points DS Bonus) 
+		// there is a better way ? (3 points DS Bonus)
 		EmployeeEntity oldEmployee = getEmployeeEntityById(id);
 		if (newEmployee.getName() != null)
 			oldEmployee.setName(newEmployee.getName());
@@ -133,16 +135,16 @@ public class EmployeeServiceImpl {
 		}
 
 		// update departement
-		
+
 		List<DepartementEntity> oldDeparts = oldEmployee.getDeparts();
 		List<DepartementEntity> newDeparts = newEmployee.getDeparts();
-		if(newDeparts != null) {
+		if (newDeparts != null) {
 			for (DepartementEntity newDepart : newDeparts) {
 				for (DepartementEntity oldDepart : oldDeparts) {
-					if(oldDepart.getId() == newDepart.getId()) {
-						if(newDepart.getCodeDepart() != null)
+					if (oldDepart.getId() == newDepart.getId()) {
+						if (newDepart.getCodeDepart() != null)
 							oldDepart.setCodeDepart(newDepart.getCodeDepart());
-						if(newDepart.getName() != null)
+						if (newDepart.getName() != null)
 							oldDepart.setName(newDepart.getName());
 					}
 				}
@@ -158,44 +160,83 @@ public class EmployeeServiceImpl {
 		reposEmployee.deleteById(id);
 		return employee;
 	}
-	
+
 	// All Employees with a given operator
-	public List<EmployeeEntity> getAllByOperator(String operator){
+	public List<EmployeeEntity> getAllByOperator(String operator) {
 		// version 1
-		/*List<EmployeeEntity> employees = reposEmployee.findAll();
-		List<EmployeeEntity> results = new ArrayList<>();
-		for (EmployeeEntity employee : employees) {
-			List<PhoneNumberEntity> phones = employee.getPhones();
-			for (PhoneNumberEntity phone : phones) {
-				if(phone.getOperator().equalsIgnoreCase(operator)) {
-					results.add(employee);
-					break;
-				}
-					
-			}
-		}*/
-		
+		/*
+		 * List<EmployeeEntity> employees = reposEmployee.findAll();
+		 * List<EmployeeEntity> results = new ArrayList<>(); for (EmployeeEntity
+		 * employee : employees) { List<PhoneNumberEntity> phones =
+		 * employee.getPhones(); for (PhoneNumberEntity phone : phones) {
+		 * if(phone.getOperator().equalsIgnoreCase(operator)) { results.add(employee);
+		 * break; }
+		 * 
+		 * } }
+		 */
+
 		// version 2
-		/*Set<EmployeeEntity> results = new HashSet<>();
-		List<PhoneNumberEntity> phones = reposPhone.findAll();
-		for (PhoneNumberEntity phone : phones) {
-			if(phone.getOperator().equalsIgnoreCase(operator)) {
-				results.add(phone.getEmployee());
-			}
-		}
-		return new ArrayList<>(results);
-		*/
-		
+		/*
+		 * Set<EmployeeEntity> results = new HashSet<>(); List<PhoneNumberEntity> phones
+		 * = reposPhone.findAll(); for (PhoneNumberEntity phone : phones) {
+		 * if(phone.getOperator().equalsIgnoreCase(operator)) {
+		 * results.add(phone.getEmployee()); } } return new ArrayList<>(results);
+		 */
+
 		// version 3 in Java 8
-		List<EmployeeEntity> results = reposPhone.findAll()
-												.stream()
-												.filter(phone -> phone.getOperator().equalsIgnoreCase(operator))
-												.map(phone -> phone.getEmployee())
-												.distinct()
-												.collect(Collectors.toList());
-		
+
+		List<EmployeeEntity> results = reposPhone.findAll()// list of Data
+				.stream()//
+
+				.filter(phone -> phone.getOperator().equalsIgnoreCase(operator))
+				// Stream Contains only phone with given operator
+
+				.map(phone -> phone.getEmployee())
+				// Stream of employee have phones with given operator
+
+				.distinct()
+				// Stream without duplication
+
+				// collect Stream elements in a list
+				.collect(Collectors.toList());
+
 		return results;
 	}
+
+	// Average age of all Employees
+	public double getAverageAges() {
+		/*
+		 * Version 1 List<EmployeeEntity> employees = reposEmployee.findAll(); double
+		 * sum = 0; for (EmployeeEntity employee : employees) { sum+=employee.getAge();
+		 * } return sum / employees.size();
+		 */
+		// Version Java8
+
+		return reposEmployee.findAll().stream()
+				.mapToInt(emp -> emp.getAge())
+				.average().orElse(0);
+	}
+
+	// Returns Phones operators and numbers of phone for each operators
+	public Map<String, Long> getOperatorsAndCount() {
+		List<PhoneNumberEntity> phones = reposPhone.findAll();
+		Map<String,Long> map2 = new HashMap<>();
+		// version 1
+		for (PhoneNumberEntity phone : phones) {
+			if(map2.containsKey(phone.getOperator())) {
+				map2.put(phone.getOperator(), map2.get(phone.getOperator())+1);
+			} else {
+				map2.put(phone.getOperator(), 1L);
+			}
+		}
+		
+		// version 2
+		Map<String,Long> map=  phones.stream()
+			  .collect(Collectors.groupingBy(phone-> phone.getOperator(),Collectors.counting()));
 	
+		return map2;
+	}
+
+	// return an employee by name
 
 }
