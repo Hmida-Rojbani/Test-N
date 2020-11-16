@@ -184,7 +184,7 @@ public class EmployeeServiceImpl {
 		 */
 
 		// version 3 in Java 8
-
+		/*
 		List<EmployeeEntity> results = reposPhone.findAll()// list of Data
 				.stream()//
 
@@ -201,6 +201,9 @@ public class EmployeeServiceImpl {
 				.collect(Collectors.toList());
 
 		return results;
+		*/
+		// version with Query
+		return reposPhone.getEmpWithOpt(operator);
 	}
 
 	// Average age of all Employees
@@ -249,10 +252,14 @@ public class EmployeeServiceImpl {
 		throw new NoSuchElementException("Employee with this name is not found");
 		*/
 		// version 2
+		/*
 		return employees.stream()
 				 .filter(employee -> employee.getName().equalsIgnoreCase(name))
 				 .findFirst()
 				 .orElseThrow(()->new NoSuchElementException("Employee with this name is not found"));
+		*/
+		return reposEmployee.findByNameIgnoreCase(name)
+				.orElseThrow(()->new NoSuchElementException("Employee with this name is not found"));
 	}
 
 }
