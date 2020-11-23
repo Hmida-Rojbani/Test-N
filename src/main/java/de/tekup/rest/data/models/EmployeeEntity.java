@@ -50,5 +50,9 @@ public class EmployeeEntity {
 		int age = (int) ChronoUnit.YEARS.between(dateOfBirth, now);
 		return age;
 	}
+	
+	public String getFullAddress() {
+		return address.getNumber()+" "+address.getStreet()+", "+address.getCity()+".";
+	}
 
 }

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ import de.tekup.rest.data.repositories.AddressRepository;
 import de.tekup.rest.data.repositories.DepartementRepository;
 import de.tekup.rest.data.repositories.EmployeeRepository;
 import de.tekup.rest.data.repositories.PhoneNumberRepository;
+import de.tekup.rest.data.services.dto.EmployeeDTO;
+import de.tekup.rest.data.services.dto.EmployeeRequestDTO;
 
 @Service
 public class EmployeeServiceImpl {
@@ -30,15 +33,18 @@ public class EmployeeServiceImpl {
 	private AddressRepository reposAddress;
 	private PhoneNumberRepository reposPhone;
 	private DepartementRepository reposDepart;
+	private ModelMapper mapper; 
 
 	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository reposEmployee, AddressRepository reposAddress,
-			PhoneNumberRepository reposPhone, DepartementRepository reposDepart) {
+			PhoneNumberRepository reposPhone, DepartementRepository reposDepart
+			,ModelMapper mapper) {
 		super();
 		this.reposEmployee = reposEmployee;
 		this.reposAddress = reposAddress;
 		this.reposPhone = reposPhone;
 		this.reposDepart = reposDepart;
+		this.mapper = mapper;
 	}
 
 	public List<EmployeeEntity> getAllEmployeeEntities() {
@@ -46,7 +52,8 @@ public class EmployeeServiceImpl {
 	}
 
 	// update that consider depatrs
-	public EmployeeEntity createEmployeeEntity(EmployeeEntity employee) {
+	public EmployeeDTO createEmployeeEntity(EmployeeRequestDTO request) {
+		EmployeeEntity employee = mapper.map(request, EmployeeEntity.class);
 		// save Address
 		AddressEntity address = employee.getAddress();
 		AddressEntity addressInBase = reposAddress.save(address);
@@ -59,33 +66,36 @@ public class EmployeeServiceImpl {
 		 * for (PhoneNumberEntity phone : phones) { phone.setEmployee(employeeInBase);
 		 * reposPhone.save(phone); }
 		 */
+		if (phones != null) {
+			phones.forEach(phone -> phone.setEmployee(employeeInBase));
+			reposPhone.saveAll(phones);
+		}
 
-		phones.forEach(phone -> phone.setEmployee(employeeInBase));
-		reposPhone.saveAll(phones);
 		// save Departement
 		List<DepartementEntity> requestDepartement = employee.getDeparts();
 		List<DepartementEntity> inBaseDepartment = reposDepart.findAll();
+		if (requestDepartement != null) {
+			for (DepartementEntity reqDepartement : requestDepartement) {
+				if (inBaseDepartment.contains(reqDepartement)) {
+					DepartementEntity inBaseDept = inBaseDepartment.get(inBaseDepartment.indexOf(reqDepartement));
 
-		for (DepartementEntity reqDepartement : requestDepartement) {
-			if (inBaseDepartment.contains(reqDepartement)) {
-				DepartementEntity inBaseDept = inBaseDepartment.get(inBaseDepartment.indexOf(reqDepartement));
+					inBaseDept.getEmployees().add(employeeInBase);
 
-				inBaseDept.getEmployees().add(employeeInBase);
+					reposDepart.save(inBaseDept);
+				} else {
+					// List<EmployeeEntity> listEmp = new ArrayList<>();
+					// listEmp.add(employeeInBase);
+					reqDepartement.setEmployees(Arrays.asList(employeeInBase));
+					reposDepart.save(reqDepartement);
+				}
 
-				reposDepart.save(inBaseDept);
-			} else {
-				// List<EmployeeEntity> listEmp = new ArrayList<>();
-				// listEmp.add(employeeInBase);
-				reqDepartement.setEmployees(Arrays.asList(employeeInBase));
-				reposDepart.save(reqDepartement);
 			}
-
 		}
 
-		return employeeInBase;
+		return mapper.map(employeeInBase, EmployeeDTO.class) ;
 	}
 
-	public EmployeeEntity getEmployeeEntityById(int id) {
+	public EmployeeDTO getEmployeeEntityById(int id) {
 		Optional<EmployeeEntity> opt = reposEmployee.findById(id);
 		EmployeeEntity employee;
 		if (opt.isPresent()) {
@@ -94,13 +104,15 @@ public class EmployeeServiceImpl {
 			throw new NoSuchElementException("Employee with this id is not found");
 		}
 		System.err.println(employee.getAddress());
-		return employee;
+
+		EmployeeDTO emp = mapper.map(employee, EmployeeDTO.class);
+		return emp;
 	}
 
 	// update
 	public EmployeeEntity modifyEmployeeEntity(int id, EmployeeEntity newEmployee) {
 		// there is a better way ? (3 points DS Bonus)
-		EmployeeEntity oldEmployee = getEmployeeEntityById(id);
+		EmployeeEntity oldEmployee = mapper.map(getEmployeeEntityById(id), EmployeeEntity.class);
 		if (newEmployee.getName() != null)
 			oldEmployee.setName(newEmployee.getName());
 		if (newEmployee.getDateOfBirth() != null)
@@ -156,7 +168,7 @@ public class EmployeeServiceImpl {
 
 	// delete by Id
 	public EmployeeEntity deleteEmployeeEntity(int id) {
-		EmployeeEntity employee = getEmployeeEntityById(id);
+		EmployeeEntity employee = mapper.map(getEmployeeEntityById(id), EmployeeEntity.class);
 		reposEmployee.deleteById(id);
 		return employee;
 	}
@@ -185,23 +197,21 @@ public class EmployeeServiceImpl {
 
 		// version 3 in Java 8
 		/*
-		List<EmployeeEntity> results = reposPhone.findAll()// list of Data
-				.stream()//
-
-				.filter(phone -> phone.getOperator().equalsIgnoreCase(operator))
-				// Stream Contains only phone with given operator
-
-				.map(phone -> phone.getEmployee())
-				// Stream of employee have phones with given operator
-
-				.distinct()
-				// Stream without duplication
-
-				// collect Stream elements in a list
-				.collect(Collectors.toList());
-
-		return results;
-		*/
+		 * List<EmployeeEntity> results = reposPhone.findAll()// list of Data
+		 * .stream()//
+		 * 
+		 * .filter(phone -> phone.getOperator().equalsIgnoreCase(operator)) // Stream
+		 * Contains only phone with given operator
+		 * 
+		 * .map(phone -> phone.getEmployee()) // Stream of employee have phones with
+		 * given operator
+		 * 
+		 * .distinct() // Stream without duplication
+		 * 
+		 * // collect Stream elements in a list .collect(Collectors.toList());
+		 * 
+		 * return results;
+		 */
 		// version with Query
 		return reposPhone.getEmpWithOpt(operator);
 	}
@@ -215,28 +225,26 @@ public class EmployeeServiceImpl {
 		 */
 		// Version Java8
 
-		return reposEmployee.findAll().stream()
-				.mapToInt(emp -> emp.getAge())
-				.average().orElse(0);
+		return reposEmployee.findAll().stream().mapToInt(emp -> emp.getAge()).average().orElse(0);
 	}
 
 	// Returns Phones operators and numbers of phone for each operators
 	public Map<String, Long> getOperatorsAndCount() {
 		List<PhoneNumberEntity> phones = reposPhone.findAll();
-		Map<String,Long> map2 = new HashMap<>();
+		Map<String, Long> map2 = new HashMap<>();
 		// version 1
 		for (PhoneNumberEntity phone : phones) {
-			if(map2.containsKey(phone.getOperator())) {
-				map2.put(phone.getOperator(), map2.get(phone.getOperator())+1);
+			if (map2.containsKey(phone.getOperator())) {
+				map2.put(phone.getOperator(), map2.get(phone.getOperator()) + 1);
 			} else {
 				map2.put(phone.getOperator(), 1L);
 			}
 		}
-		
+
 		// version 2
-		Map<String,Long> map=  phones.stream()
-			  .collect(Collectors.groupingBy(phone-> phone.getOperator(),Collectors.counting()));
-	
+		Map<String, Long> map = phones.stream()
+				.collect(Collectors.groupingBy(phone -> phone.getOperator(), Collectors.counting()));
+
 		return map2;
 	}
 
@@ -244,22 +252,20 @@ public class EmployeeServiceImpl {
 	public EmployeeEntity getByName(String name) {
 		List<EmployeeEntity> employees = reposEmployee.findAll();
 		// version 1
-		/*for (EmployeeEntity employee : employees) {
-			if(employee.getName().equalsIgnoreCase(name))
-				return employee;
-		}
-		
-		throw new NoSuchElementException("Employee with this name is not found");
-		*/
+		/*
+		 * for (EmployeeEntity employee : employees) {
+		 * if(employee.getName().equalsIgnoreCase(name)) return employee; }
+		 * 
+		 * throw new NoSuchElementException("Employee with this name is not found");
+		 */
 		// version 2
 		/*
-		return employees.stream()
-				 .filter(employee -> employee.getName().equalsIgnoreCase(name))
-				 .findFirst()
-				 .orElseThrow(()->new NoSuchElementException("Employee with this name is not found"));
-		*/
+		 * return employees.stream() .filter(employee ->
+		 * employee.getName().equalsIgnoreCase(name)) .findFirst() .orElseThrow(()->new
+		 * NoSuchElementException("Employee with this name is not found"));
+		 */
 		return reposEmployee.findByNameIgnoreCase(name)
-				.orElseThrow(()->new NoSuchElementException("Employee with this name is not found"));
+				.orElseThrow(() -> new NoSuchElementException("Employee with this name is not found"));
 	}
 
 }
